@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Gallery</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-images"></i>Image Gallery</h2>
+            <button class="toggle-sidebar" id="toggleSidebar">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <button class="nav-item active" data-section="all">
+                <i class="fas fa-th"></i> <span>All Images</span>
+                <span class="badge" id="allCount">0</span>
+            </button>
+            <button class="nav-item" data-section="nature">
+                <i class="fas fa-tree"></i> <span>Nature</span>
+                <span class="badge" id="natureCount">0</span>
+            </button>
+            <button class="nav-item" data-section="people">
+                <i class="fas fa-user"></i> <span>People</span>
+                <span class="badge" id="peopleCount">0</span>
+            </button>
+            <button class="nav-item" data-section="architecture">
+                <i class="fas fa-building"></i> <span>Architecture</span>
+                <span class="badge" id="architectureCount">0</span>
+            </button>
+            <button class="nav-item" data-section="art">
+                <i class="fas fa-palette"></i> <span>Art</span>
+                <span class="badge" id="artCount">0</span>
+            </button>
+            <button class="nav-item" data-section="uncategorized">
+                <i class="fas fa-folder"></i> <span>Uncategorized</span>
+                <span class="badge" id="uncategorizedCount">0</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="upload-btn" id="uploadBtn">
+                <i class="fas fa-plus-circle"></i> Upload Images
+            </button>
+            <input type="file" id="fileInput" multiple accept="image/*" style="display:none" />
+        </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content" id="mainContent">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-left">
+                <button class="menu-btn" id="menuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 id="sectionTitle">All Images</h1>
+            </div>
+            <div class="header-right">
+                <button class="theme-btn" id="themeBtn">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="view-btn" id="viewBtn">
+                    <i class="fas fa-th-large"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drop images here</h3>
+            <p>or click to browse</p>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryGrid">
+            <!-- Images rendered by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="fas fa-image"></i>
+            <h3>No images here yet</h3>
+            <p>Upload some beautiful images to get started!</p>
+            <button class="upload-btn-primary" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-upload"></i> Upload Now
+            </button>
+        </div>
+    </main>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-header">
+            <div class="lightbox-info">
+                <span id="lightboxTitle">Image Title</span>
+                <span class="lightbox-category" id="lightboxCategory">Nature</span>
+            </div>
+            <div class="lightbox-actions">
+                <button class="lb-btn" id="editBtn" title="Edit Image">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="lb-btn" id="downloadBtn" title="Download">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="lb-btn" id="deleteBtn" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="lb-btn close-lb" id="closeLb">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="lightbox-body">
+            <button class="nav-btn prev-lb" id="prevLb">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <img class="lightbox-img" id="lightboxImg" src="" alt="Lightbox" />
+            <button class="nav-btn next-lb" id="nextLb">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div class="lightbox-footer">
+            <div class="image-metadata">
+                <span id="lbDate"></span>
+                <span id="lbSize"></span>
+                <span id="lbDimensions"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== EDITOR MODAL ===== -->
+    <div class="modal" id="editorModal">
+        <div class="modal-content editor-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-sliders-h"></i> Image Editor</h2>
+                <button class="close-modal" id="closeEditor">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="editor-body">
+                <div class="editor-preview">
+                    <canvas id="editorCanvas"></canvas>
+                </div>
+
+                <div class="editor-controls">
+                    <div class="control-group">
+                        <h4>Transform</h4>
+                        <div class="btn-group">
+                            <button class="edit-btn" data-action="rotate-left">
+                                <i class="fas fa-undo"></i> Rotate Left
+                            </button>
+                            <button class="edit-btn" data-action="rotate-right">
+                                <i class="fas fa-redo"></i> Rotate Right
+                            </button>
+                            <button class="edit-btn" data-action="flip-horizontal">
+                                <i class="fas fa-arrows-alt-h"></i> Flip H
+                            </button>
+                            <button class="edit-btn" data-action="flip-vertical">
+                                <i class="fas fa-arrows-alt-v"></i> Flip V
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h4>Adjustments</h4>
+                        <div class="slider-group">
+                            <label>Brightness: <span id="brightnessVal">100%</span></label>
+                            <input type="range" id="brightness" min="0" max="200" value="100" />
+                        </div>
+                        <div class="slider-group">
+                            <label>Contrast: <span id="contrastVal">100%</span></label>
+                            <input type="range" id="contrast" min="0" max="200" value="100" />
+                        </div>
+                        <div class="slider-group">
+                            <label>Saturation: <span id="saturationVal">100%</span></label>
+                            <input type="range" id="saturation" min="0" max="200" value="100" />
+                        </div>
+                        <div class="slider-group">
+                            <label>Blur: <span id="blurVal">0px</span></label>
+                            <input type="range" id="blur" min="0" max="10" value="0" step="0.1" />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h4>Filters</h4>
+                        <div class="filter-presets">
+                            <button class="filter-preset" data-filter="none">Normal</button>
+                            <button class="filter-preset" data-filter="grayscale(100%)">Grayscale</button>
+                            <button class="filter-preset" data-filter="sepia(100%)">Sepia</button>
+                            <button class="filter-preset" data-filter="hue-rotate(180deg)">Hue Rotate</button>
+                            <button class="filter-preset" data-filter="invert(100%)">Invert</button>
+                        </div>
+                    </div>
+
+                    <div class="editor-actions">
+                        <button class="btn-secondary" id="resetEditor">
+                            <i class="fas fa-undo-alt"></i> Reset
+                        </button>
+                        <button class="btn-primary" id="saveEditor">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
